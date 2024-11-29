@@ -1,38 +1,80 @@
-# ESD-Project
-Project work for Enterprise Software Development.
+# Alumni Registration System
 
-Task: To create a salary disbursement system which allows the employees to disburse the salary of a single faculty or a selection of faculties.
+## 1. Project Goals
+The goal of this project is to create an interactive and easy-to-use interface for alumni to register their details, including their education history and organization experience. Additionally, administrators can view and manage alumni records. The system ensures secure access to alumni data, accessible only to authenticated users.
 
-We have used JWT(JSON Web Token) Tokens for the purpose of authentication and logging in to the system. We have used springboot for the backend of our project and react for the frontend of our project. 
+## 2. Architecture Overview
 
-# 1. Project Goals
-Our aim was to create an interactive easy-to-use interface for employees and administrators. We had to ensure a secure way of performing transactions of salaries by only authenticated users.
+### Backend
+We use **Spring Boot** to build the backend of our project, which follows a layered architecture for clean separation of concerns. The architecture consists of four main layers:
 
-# 2. Architecture Overview
+1. **Controller Layer**  
+   The controller layer acts as the entry point for incoming requests from the client. It delegates the logic to the service layer and returns the appropriate response. In our project, we have two controller layers:
+   - **AuthController**: Handles user authentication requests (login).
+   - **AlumniController**: Handles requests related to alumni information (CRUD operations for alumni, education, and organization).
 
-## Backend -
-We used Springboot to build the backend of our project. Springboot allows us to create applications using Java language while providing us with bundle of libraries that make our project startup and management easier. The given project was implemented in a layered architecture consiting of mainly four layers-
-1. Controller Layer
-2. Service Layer
-3. Repository Layer
-4. Model/Entity Layer
+2. **Service Layer**  
+   This layer contains the business logic. It interacts with the repository layer to persist and retrieve data. The service layer is represented by the **AlumniService** class.
 
-The Controller Layer acts as an entry point for the application where it receives request from the user an delegates the task to the service layer. It handles request the incoming requests (eg. GET, POST, PUT, DELETE) and returns the appropriate HTTP response back tot the client. Our Project consists of two Controller Layers, the *AuthController* layer and the *EmployeeController* Layer. The *AuthController* is responsible for validating the user while the *EmployeeController* layer is responsible for handling the requests of the employees.  
+3. **Repository Layer**  
+   The repository layer interacts directly with the database. It handles CRUD operations using JPA (Java Persistence API). The repositories in our system include:
+   - **AlumniRepo**: For interacting with the **Alumni** table.
+   - **AlumniEducationRepo**: For interacting with the **Alumni_Education** table.
+   - **AlumniOrganizationRepo**: For interacting with the **Alumni_Organization** table.
 
-The Service Layer is used to implement the business logic of the application. It interacts with the repository layer to persist or retreive the data. We have only one service layer *EmployeeService* layer.  
+### Frontend
+The frontend of the application is built using **React**. The interface is designed to allow alumni to easily register their personal, educational, and professional details. The system is designed to be intuitive for users and administrators. The frontend interacts with the backend via RESTful API calls. Key sections in the frontend include:
+- **Login page**: For authenticating users.
+- **Alumni Registration page**: For alumni to enter their personal, education, and organization details.
+- **Admin Dashboard**: For administrators to manage alumni records.
 
-The Repository Layer is responsible for directly interacting with the database. It contains the method of of querying and modifying the data. It is responsible for performing CRUD operations such as (Create, Read, Update, Delete). We managae presistence and retrieval of data throught ORM frameworks like JPA(Java Persistence API). There are three repository layers in our given project *DepartmentsRepo, **EmployeeRepo* and *EmployeeSalaryRepo*.  
+---
 
-The Model/Entity Layer is represents the database/data structures and domain objects of the application. We defind the database we are going to work with in the form of a class and define the field as entities of the class. It represents data as a form of object. The entities for our project are *Departments, **EmployeeAccounts, **Employees* and *EmployeeSalary*.  
+## 3. Authentication and Login
 
-## Frontend -  
+We implement authentication using **JWT (JSON Web Tokens)** to securely manage user sessions. Here's how it works:
 
-# 3. Authentication and LogIn -  
-We implement authentication in our Project with the help of JWT tokens. JWT tokens are used for secure authentication and authorization. JWT is a compace, URL safe token that can securely transmit and information between parties as a JSON object. These tokens are verified and are used to grant access to protected resources. The user enters their credentials and sends a POST request to the backend of our API. The backend returns a JWT token on successful authentication which is stored securely in the frontend of our Project. If the tokens expire, the frontend redirects the user to the login page or provides a refresh mechanism. 
+1. The user provides their login credentials (username/password).
+2. The backend verifies the credentials and generates a JWT token.
+3. The JWT token is returned to the frontend on successful authentication.
+4. The frontend stores the JWT token securely (in localStorage or cookies).
+5. For any subsequent requests to protected resources, the frontend sends the JWT token as part of the Authorization header.
+6. If the token expires, the frontend will either redirect the user to the login page or handle token refresh.
 
-# 4. Database Design -
-We have created four entities for our backend. Those entities are *Departments, **EmployeeAccounts, **Employees* and *EmployeeSalary* which corresponds to the four table we will work with-  
-* Departments - {department_id, capacity, name, department}
-* EmployeeAccounts - {employee_id, balance}
-* Employees - {first_name, last_name, email, title, salary, photograph_path, password, department}
-* EmployeeSalary - {id, employee_id, payment_date, amount, description}
+---
+
+## 4. Database Design
+
+We will have the following entities and their corresponding tables:
+
+### Entities & Tables
+
+1. **Alumni**  
+   Table: **alumni**
+   - **id** (Primary Key, Auto-generated)
+   - **first_name** (VARCHAR)
+   - **last_name** (VARCHAR)
+   - **email** (VARCHAR, Unique)
+   - **contact_number** (VARCHAR)
+   - **organization_id** (Foreign Key referencing organization details)
+
+2. **Alumni_Education**  
+   Table: **alumni_education**
+   - **id** (Primary Key, Auto-generated)
+   - **alumni_id** (Foreign Key, references alumni.id)
+   - **degree** (VARCHAR)
+   - **passing_year** (YEAR)
+   - **joining_year** (YEAR)
+   - **college_name** (VARCHAR)
+   - **address** (VARCHAR)
+
+3. **Alumni_Organization**  
+   Table: **alumni_organization**
+   - **id** (Primary Key, Auto-generated)
+   - **alumni_id** (Foreign Key, references alumni.id)
+   - **organization** (VARCHAR)
+   - **position** (VARCHAR)
+   - **joining_date** (DATE)
+   - **leaving_date** (DATE)
+
+---
